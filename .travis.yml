@@ -2,19 +2,44 @@ language: cpp
 compiler: gcc
 
 before_install:
+    # Add PPA for gcc
     - sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test
+    # Update apt
     - sudo apt-get update -qq
+    # Install gcc 4.8
     - sudo apt-get install -qq gcc-4.8 g++-4.8
+    # Make gcc 4.8 the default version
     - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 100
     - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 100
     - sudo update-alternatives --install /usr/bin/cpp cpp /usr/bin/cpp-4.8 100
+    # Install required libraries from apt
     - sudo apt-get install -qq libgtkmm-3.0-dev
     - sudo apt-get install -qq libgtest-dev
+    - sudo apt-get install -qq libpthread-stubs0-dev
+    - sudo apt-get install -qq libgl1-mesa-dev
+    - sudo apt-get install -qq libx11-dev
+    - sudo apt-get install -qq libxrandr-dev
+    - sudo apt-get install -qq libfreetype6-dev
+    - sudo apt-get install -qq libglew1.5-dev
+    - sudo apt-get install -qq libjpeg8-dev
+    - sudo apt-get install -qq libgpgme11-dev
+    - sudo apt-get install -qq libsndfile1-dev
+    - sudo apt-get install -qq libopenal-dev
+    # Build gtest and install it
     - pushd /usr/src/gtest
     - sudo cmake CMakeLists.txt
     - sudo make
     - sudo cp *.a /usr/lib
     - popd
+    # Clone and build SFML
+    - git clone --depth=1 https://github.com/LaurentGomila/SFML
+    - cd SFML
+    - mkdir build
+    - cd build
+    - cmake ..
+    - make
+    - sudo make install
+    - cd ../..
 
 script:
     - mkdir ./build

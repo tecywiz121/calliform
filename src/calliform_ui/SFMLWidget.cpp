@@ -14,15 +14,6 @@
 #   include <gdk/gdkx.h>
 #endif
 
-SFMLWidget::SFMLWidget(BaseObjectType* cobject,
-                       const Glib::RefPtr<Gtk::Builder>& builder)
-    : Gtk::DrawingArea(cobject)
-{
-    builder->gobj();
-    set_has_window(false);
-    m_refGdkWindow = get_window();
-}
-
 SFMLWidget::SFMLWidget(sf::VideoMode mode, int size_request)
 {
     if (size_request <= 0)
@@ -39,22 +30,6 @@ SFMLWidget::SFMLWidget(sf::VideoMode mode, int size_request)
 
 SFMLWidget::~SFMLWidget()
 {
-}
-
-bool SFMLWidget::on_draw(const Cairo::RefPtr<Cairo::Context>&)
-{
-    std::cout << "on_draw" << std::endl;
-    renderWindow.clear();
-
-    sf::Vector2f position(100, 100);
-    sf::CircleShape shape(100);
-    shape.setFillColor(sf::Color(100, 250, 50));
-    shape.setPosition(position);
-
-    renderWindow.draw(shape);
-
-    display();
-    return true;
 }
 
 void SFMLWidget::on_size_allocate(Gtk::Allocation& allocation)
@@ -80,7 +55,7 @@ void SFMLWidget::on_size_allocate(Gtk::Allocation& allocation)
 void SFMLWidget::on_realize()
 {
     std::cout << "on_realize" << std::endl;
-    Gtk::DrawingArea::on_realize();
+    Gtk::Widget::on_realize();
 
     if(!m_refGdkWindow)
     {
@@ -145,7 +120,7 @@ void SFMLWidget::on_unrealize()
     m_refGdkWindow.clear();
 
     // Call base class:
-    Gtk::DrawingArea::on_unrealize();
+    Gtk::Widget::on_unrealize();
 }
 
 void SFMLWidget::display()

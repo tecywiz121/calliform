@@ -3,27 +3,29 @@
 #include <gtkmm.h>
 #include "calliform.hpp"
 #include "SFMLWidget.hpp"
+#include "Canvas.hpp"
+#if 0
 class MovingCircle
 {
 public:
     // A simple circle shape that will be animated and drawn
     sf::CircleShape circle;
-    
+
     // a reference to our SFMLWidget
     SFMLWidget& widget;
-    
+
     // The radius of our circle
     float radius;
-    
+
     MovingCircle(SFMLWidget& widget) : widget(widget)
     {
         // Set the radius to an unmiportand value
         radius = 32.f;
         circle.setRadius(radius);
-        
+
         // move the circoe to it's first position
         moveToStartPoint();
-        
+
         // Let the animate method be called every 50ms
         // Note: MovingCircle::animate() doesn't return any value, but signal_timeout() expects
         //       a boolean value.
@@ -32,7 +34,7 @@ public:
                                           sigc::mem_fun(this, &MovingCircle::animate),
                                           true),
                                        50);
-        
+
         // Makes our draw Method beeing drawn everytime the widget itself gets drawn.
         // Note: MovingCircle::draw() doesn't accept any parameter, but signal_draw() gives one.
         //       Using sigc::hide(...) we get a signal expecting one.
@@ -45,87 +47,107 @@ public:
         //                                          sigc::hide(
         //                                              sigc::mem_fun(this, &MovingCircle::draw)),
         //                                          true));
-                                
+
         // Everytime the widget gets resized, we need to adjust the view.
         widget.signal_size_allocate().connect(sigc::hide(
                                                     sigc::mem_fun(this, &MovingCircle::resize_view)));
+
+        widget.signal_button_press_event().connect(sigc::mem_fun(this, &MovingCircle::button_press));
     }
-    
+
+    bool button_press(GdkEventButton* event)
+    {
+        std::cout << "Click " << event->x << ", " << event->y << std::endl;
+        circle.setPosition(event->x - 32.f, event->y - 32.f);
+        return true;
+    }
+
     void animate()
     {
-        // Simply move the circle...
-        sf::Vector2f position = circle.getPosition();
-        position.x += 8.f;
-        position.y += 8.f;
-        
-        // until it "leaves" the Widget
-        if(position.x > widget.renderWindow.getSize().x+radius || position.y > widget.renderWindow.getSize().y+radius)
-          moveToStartPoint();
-        else
-          circle.setPosition(position);
-          
         // Tell gtkmm that the SFML Widget wants to be redrawn
         widget.invalidate();
     }
-    
+
     void draw()
     {
         widget.renderWindow.clear();
-    
+
         widget.renderWindow.draw(circle);
-        
+
         // Calls SFMLWidget::display, whitch checks wether the widget is realized
         // and if so, sf::RenderWindow::display gets called.
         widget.display();
     }
-    
+
     void resize_view()
     {
         // Let the View fit the pixels of the window.
         sf::Vector2f lower_right(widget.renderWindow.getSize().x,
                                  widget.renderWindow.getSize().y);
-    
+
         sf::View view(lower_right * 0.5f,
                       lower_right);
         widget.renderWindow.setView(view);
     }
-    
+
     void moveToStartPoint()
     {
         circle.setPosition(-radius, -radius);
+    }
+};
+#endif
+
+class GdkCanvas : public cf::Canvas
+{
+private:
+    SFMLWidget& _Widget;
+
+public:
+    GdkCanvas(SFMLWidget& w)
+        : Canvas(w.renderWindow, sf::Vector2u(100, 100)), _Widget(w)
+    {
+
+    }
+    virtual void invalidate()
+    {
+        _Widget.invalidate();
     }
 };
 
 int main(int argc, char* argv[])
 {
     Gtk::Main kit(argc, argv); //Initialize Gtk
- 
+
     Gtk::Window window; //The GTK window will be our top level Window
- 
-    //Our RenderWindow will never be below  640x480 (unless we explicitly change it) 
+
+    //Our RenderWindow will never be below  640x480 (unless we explicitly change it)
     //but it may be more then that
-    SFMLWidget ourRenderWindow(sf::VideoMode(640, 480)); 
-    
+    SFMLWidget ourRenderWindow(sf::VideoMode(640, 480));
+
+    GdkCanvas canvas(ourRenderWindow);
+
+    #if 0
     MovingCircle moving_circle(ourRenderWindow);
- 
+    #endif
+
     // Doesn't draw the renderWindow but makes it so it will draw when we add it to the window
     ourRenderWindow.show();
- 
+
     //VBox is a vertical box, we're going to pack our render window and a button in here
     Gtk::VBox ourVBox;
- 
-    Gtk::Button ourButton("Restart"); //Just a clickable button, it won't be doing anything
+
+    Gtk::Button ourButton("Add Layer"); //Just a clickable button, it won't be doing anything
     ourButton.show();
-    ourButton.signal_clicked().connect(sigc::mem_fun(&moving_circle, &MovingCircle::moveToStartPoint));
- 
+    ourButton.signal_clicked().connect(sigc::hide_return(sigc::mem_fun(&canvas, &cf::Canvas::PushLayer)));
+
     ourVBox.pack_start(ourRenderWindow); //Add ourRenderWindow to the top of the VBox
- 
+
     //PACK_SHRINK makes the VBox only allocate enough space to show the button and nothing more
     ourVBox.pack_start(ourButton, Gtk::PACK_SHRINK);
     ourVBox.show();
- 
+
     window.add(ourVBox); //Adds ourVBox to the window so it (and it's children) can be drawn
- 
+
     Gtk::Main::run(window); //Draw the window
     return 0;
 }

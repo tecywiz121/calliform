@@ -71,7 +71,7 @@ void SFMLWidget::on_realize()
         attributes.width = allocation.get_width();
         attributes.height = allocation.get_height();
 
-        attributes.event_mask = get_events () | Gdk::EXPOSURE_MASK;
+        attributes.event_mask = get_events () | Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK;
         attributes.window_type = GDK_WINDOW_CHILD;
         attributes.wclass = GDK_INPUT_OUTPUT;
 

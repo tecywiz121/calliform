@@ -1,3 +1,4 @@
+#include <iostream>
 #include <sstream>
 #include <string>
 #include <cassert>
@@ -20,14 +21,17 @@ namespace cf
         unsigned int remainingX = _Size.x;
         for (unsigned int xx = 0; xx < countX; xx++)
         {
+            float pX = (float)xx * _MaxTextureSize;
             unsigned int width = std::min(_MaxTextureSize, remainingX);
             remainingX -= width;
 
             _Textures.emplace_back();
+            _Sprites.emplace_back();
 
             unsigned int remainingY = _Size.y;
             for (unsigned int yy = 0; yy < countY; yy++)
             {
+                float pY = (float)yy * _MaxTextureSize;
                 unsigned int height = std::min(_MaxTextureSize, remainingY);
                 remainingY -= height;
 
@@ -44,10 +48,14 @@ namespace cf
 
                 // Adjust the view so that drawing works as expected
                 sf::View view;
-                view.reset(sf::FloatRect(-((float)xx * _MaxTextureSize),
-                                         -((float)yy * _MaxTextureSize),
-                                         width, height));
+                view.reset(sf::FloatRect(-pX, -pY, width, height));
                 tex->setView(view);
+
+                // Create a sprite and attach the texture to it
+                std::unique_ptr<sf::Sprite> sprite = make_unique<sf::Sprite>();
+                sprite->setTexture(tex->getTexture(), true);
+                sprite->setPosition(pX, pY);
+                _Sprites[xx].push_back(std::move(sprite));
 
                 _Textures[xx].push_back(std::move(tex));
             }
@@ -58,7 +66,18 @@ namespace cf
 
     RenderPlane::~RenderPlane()
     {
+        _Sprites.clear();
         _Textures.clear();
     }
 
+    void RenderPlane::draw(sf::RenderTarget& target, sf::RenderStates states) const
+    {
+        for (const SpriteVec& vec : _Sprites)
+        {
+            for (const std::unique_ptr<sf::Sprite>& sprite : vec)
+            {
+                target.draw(*sprite, states);
+            }
+        }
+    }
 }

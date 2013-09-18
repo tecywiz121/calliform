@@ -8,14 +8,19 @@
 namespace cf
 {
     typedef std::vector<std::unique_ptr<sf::RenderTexture> > TextureVec;
+    typedef std::vector<std::unique_ptr<sf::Sprite> > SpriteVec;
 
-    class RenderPlane : sf::NonCopyable
+    class RenderPlane : sf::NonCopyable, public sf::Drawable
     {
     private:
         const unsigned int _MaxTextureSize;
         const sf::Vector2u _Size;
 
         std::vector<TextureVec> _Textures;
+        std::vector<SpriteVec> _Sprites;
+
+    protected:
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     public:
         RenderPlane(sf::Vector2u size);

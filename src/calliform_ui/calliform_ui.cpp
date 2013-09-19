@@ -138,7 +138,7 @@ int main(int argc, char* argv[])
 
     Gtk::Button ourButton("Add Layer"); //Just a clickable button, it won't be doing anything
     ourButton.show();
-    ourButton.signal_clicked().connect(sigc::hide_return(sigc::mem_fun(&canvas, &cf::Canvas::PushLayer)));
+    ourButton.signal_clicked().connect(sigc::hide_return(sigc::mem_fun(&canvas, &cf::Canvas::pushLayer)));
 
     ourVBox.pack_start(ourRenderWindow); //Add ourRenderWindow to the top of the VBox
 

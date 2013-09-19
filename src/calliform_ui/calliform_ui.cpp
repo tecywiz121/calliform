@@ -4,7 +4,9 @@
 #include "calliform.hpp"
 #include "SFMLWidget.hpp"
 #include "Canvas.hpp"
-#if 0
+#include "BrushesImage.hpp"
+#include "BrushesProperty.hpp"
+
 class MovingCircle
 {
 public:
@@ -14,11 +16,23 @@ public:
     // a reference to our SFMLWidget
     SFMLWidget& widget;
 
+    cf::Brushes::Image brush;
+
     // The radius of our circle
     float radius;
 
     MovingCircle(SFMLWidget& widget) : widget(widget)
     {
+        cf::Brushes::Value<unsigned int> d;
+        d.set(32);
+        brush.setProperty(cf::Brushes::Image::PROP_DIAMETER, d);
+
+        cf::Brushes::Value<std::string> s;
+        s.set("cat.png");
+        brush.setProperty(cf::Brushes::Image::PROP_SOURCE, s);
+
+        brush.prepare();
+
         // Set the radius to an unmiportand value
         radius = 32.f;
         circle.setRadius(radius);
@@ -72,7 +86,8 @@ public:
     {
         widget.renderWindow.clear();
 
-        widget.renderWindow.draw(circle);
+        //widget.renderWindow.draw(circle);
+        brush.render(widget.renderWindow);
 
         // Calls SFMLWidget::display, whitch checks wether the widget is realized
         // and if so, sf::RenderWindow::display gets called.
@@ -95,8 +110,8 @@ public:
         circle.setPosition(-radius, -radius);
     }
 };
-#endif
 
+#if 0
 class GdkCanvas : public cf::Canvas
 {
 private:
@@ -113,6 +128,7 @@ public:
         _Widget.invalidate();
     }
 };
+#endif
 
 int main(int argc, char* argv[])
 {
@@ -124,11 +140,11 @@ int main(int argc, char* argv[])
     //but it may be more then that
     SFMLWidget ourRenderWindow(sf::VideoMode(640, 480));
 
-    GdkCanvas canvas(ourRenderWindow);
-
     #if 0
-    MovingCircle moving_circle(ourRenderWindow);
+    GdkCanvas canvas(ourRenderWindow);
     #endif
+
+    MovingCircle moving_circle(ourRenderWindow);
 
     // Doesn't draw the renderWindow but makes it so it will draw when we add it to the window
     ourRenderWindow.show();
@@ -138,7 +154,7 @@ int main(int argc, char* argv[])
 
     Gtk::Button ourButton("Add Layer"); //Just a clickable button, it won't be doing anything
     ourButton.show();
-    ourButton.signal_clicked().connect(sigc::hide_return(sigc::mem_fun(&canvas, &cf::Canvas::pushLayer)));
+//    ourButton.signal_clicked().connect(sigc::hide_return(sigc::mem_fun(&canvas, &cf::Canvas::pushLayer)));
 
     ourVBox.pack_start(ourRenderWindow); //Add ourRenderWindow to the top of the VBox
 

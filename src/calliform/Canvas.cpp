@@ -5,16 +5,16 @@
 namespace cf
 {
     Canvas::Canvas(sf::RenderTarget& displayTarget, sf::Vector2u size)
-        : _DisplayTarget(displayTarget), _Size(size)
+        : _displayTarget(displayTarget), _size(size)
     {
 
     }
 
-    Layer& Canvas::PushLayer()
+    Layer& Canvas::pushLayer()
     {
-        std::unique_ptr<Layer> lptr = make_unique<Layer>(_Size);
+        std::unique_ptr<Layer> lptr = make_unique<Layer>(_size);
         Layer& retval = *lptr;
-        _Layers.push_back(std::move(lptr));
+        _layers.push_back(std::move(lptr));
         return retval;
     }
 

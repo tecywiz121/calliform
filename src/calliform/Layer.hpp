@@ -9,16 +9,16 @@ namespace cf
     class Layer
     {
     private:
-        RenderPlane _Plane;
-        sf::Color _Tag;
+        RenderPlane _plane;
+        sf::Color _tag;
 
     public:
         Layer(sf::Vector2u size);
 
-        sf::Color Tag() const { return _Tag; }
-        void Tag(sf::Color tag) { _Tag = tag; }
+        sf::Color tag() const { return _tag; }
+        void tag(sf::Color tag) { _tag = tag; }
 
-        sf::Vector2u Size() const { return _Plane.Size(); }
+        sf::Vector2u size() const { return _plane.size(); }
 
         ~Layer();
     };

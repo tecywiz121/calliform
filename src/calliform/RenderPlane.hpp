@@ -13,19 +13,18 @@ namespace cf
     class RenderPlane : sf::NonCopyable, public sf::Drawable
     {
     private:
-        const unsigned int _MaxTextureSize;
-        const sf::Vector2u _Size;
+        const unsigned int _maxTextureSize;
+        const sf::Vector2u _size;
 
-        std::vector<TextureVec> _Textures;
-        std::vector<SpriteVec> _Sprites;
+        std::vector<TextureVec> _textures;
+        std::vector<SpriteVec> _sprites;
 
     protected:
         virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     public:
         RenderPlane(sf::Vector2u size);
-        sf::Vector2u Size() const { return _Size; }
-        void Size(sf::Vector2u v);
+        sf::Vector2u size() const { return _size; }
 
         virtual ~RenderPlane();
     };

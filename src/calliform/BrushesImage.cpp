@@ -19,8 +19,6 @@ Image::Image()
     addProperty(PROP_SOURCE, "");
     addProperty(PROP_SMOOTH, false, true, false);
     addProperty(PROP_REPEAT, false, true, false);
-
-    _sprite.setTexture(_texture);
 }
 
 void Image::getProperty(const std::string& name, AnyValue& value)
@@ -73,29 +71,26 @@ void Image::setProperty(const std::string& name, const AnyValue& value)
 
 void Image::prepare()
 {
+    // Load the texture from the given file
     if (!_texture.loadFromFile(_source))
     {
         throw SFMLError("unable to load texture");
     }
 
+    // Set texture properties
     _texture.setSmooth(_smooth);
     _texture.setRepeated(_repeat);
 
     // Resize the sprite to fit in the diameter
     sf::Vector2u texSize = _texture.getSize();
     unsigned int longSide = std::max(texSize.x, texSize.y);
-    float scale = (float)_diameter / (float)longSide;
-    _sprite.setTexture(_texture);
-    _sprite.setScale(scale, scale);
-    _sprite.setPosition(0, 0);
-
-    _shape.setRadius(_diameter/2.f);
+    _scale = (float)_diameter / (float)longSide;
 }
 
-void Image::render(sf::RenderTarget& target) const
+void Image::render(sf::Sprite& sprite) const
 {
-    target.draw(_shape);
-    target.draw(_sprite);
+    sprite.setScale(_scale, _scale);
+    sprite.setTexture(_texture);
 }
 
 }

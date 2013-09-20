@@ -25,12 +25,14 @@ protected:
     void addProperty(std::string name, T min, T max, T def)
     {
         _properties[name] = make_unique<Property<T> >(name, min, max, def);
+        Value<T> value(def);
+        setProperty(name, value);
     }
 
 public:
     virtual void setProperty(const std::string& name, const AnyValue& value) =0;
     virtual void getProperty(const std::string& name, AnyValue& value) =0;
-    virtual void render(sf::RenderTarget& target) const =0;
+    virtual void render(sf::Sprite& sprite) const =0;
     virtual void prepare() =0;
     virtual ~Base();
 };

@@ -26,6 +26,8 @@ private:
     T _value;
 
 public:
+    Value() {}
+    Value(T v) : _value(v) { }
     T get() const { return _value; }
     void set(T v) { _value = std::move(v); }
     virtual std::type_index type() override { return typeid(T); }
@@ -38,6 +40,8 @@ private:
     std::string _value;
 
 public:
+    Value() {}
+    Value(std::string v) : _value(std::move(v)) { }
     const std::string& get() const { return _value; }
     void set(std::string v) { _value = std::move(v); }
     virtual std::type_index type() override { return typeid(std::string); }

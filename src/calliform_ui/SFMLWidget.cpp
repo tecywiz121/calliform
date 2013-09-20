@@ -1,5 +1,4 @@
 #include "SFMLWidget.hpp"
-#include <iostream>
 #include <exception>
 
 #if !(defined (GDK_WINDOWING_WIN32) || defined (GDK_WINDOWING_X11))
@@ -34,7 +33,6 @@ SFMLWidget::~SFMLWidget()
 
 void SFMLWidget::on_size_allocate(Gtk::Allocation& allocation)
 {
-    std::cout << "on_size_allocated" << std::endl;
     // Do something with the space that we have actually been given: (We will
     // not be given heights or widths less than we have requested, though we
     // might get more.)
@@ -54,7 +52,6 @@ void SFMLWidget::on_size_allocate(Gtk::Allocation& allocation)
 
 void SFMLWidget::on_realize()
 {
-    std::cout << "on_realize" << std::endl;
     Gtk::Widget::on_realize();
 
     if(!m_refGdkWindow)
@@ -116,7 +113,6 @@ void SFMLWidget::on_realize()
 
 void SFMLWidget::on_unrealize()
 {
-    std::cout << "on_unrealize" << std::endl;
     m_refGdkWindow.clear();
 
     // Call base class:
@@ -125,7 +121,6 @@ void SFMLWidget::on_unrealize()
 
 void SFMLWidget::display()
 {
-    std::cout << "display" << std::endl;
     if(m_refGdkWindow)
     {
         renderWindow.display();
@@ -134,7 +129,6 @@ void SFMLWidget::display()
 
 void SFMLWidget::invalidate()
 {
-    std::cout << "invalidate" << std::endl;
     if(m_refGdkWindow)
     {
         m_refGdkWindow->invalidate(true);

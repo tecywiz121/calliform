@@ -19,8 +19,7 @@ private:
     bool _repeat;
 
     sf::Texture _texture;
-    sf::Sprite _sprite;
-    sf::CircleShape _shape;
+    float _scale;
 public:
     static const std::string PROP_DIAMETER;
     static const std::string PROP_SOURCE;
@@ -30,7 +29,7 @@ public:
     virtual void getProperty(const std::string& name, AnyValue& value) override;
     virtual void setProperty(const std::string& name, const AnyValue& value) override;
     virtual void prepare() override;
-    virtual void render(sf::RenderTarget& target) const override;
+    virtual void render(sf::Sprite& sprite) const override;
 };
 
 }

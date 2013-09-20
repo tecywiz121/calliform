@@ -10,19 +10,19 @@
 class MovingCircle
 {
 public:
-    // A simple circle shape that will be animated and drawn
-    sf::CircleShape circle;
-
     // a reference to our SFMLWidget
     SFMLWidget& widget;
 
     cf::Brushes::Image brush;
+    sf::Sprite sprite;
 
     // The radius of our circle
     float radius;
 
     MovingCircle(SFMLWidget& widget) : widget(widget)
     {
+        // drawing a sprite
+        // Load a texture from a file
         cf::Brushes::Value<unsigned int> d;
         d.set(32);
         brush.setProperty(cf::Brushes::Image::PROP_DIAMETER, d);
@@ -32,10 +32,6 @@ public:
         brush.setProperty(cf::Brushes::Image::PROP_SOURCE, s);
 
         brush.prepare();
-
-        // Set the radius to an unmiportand value
-        radius = 32.f;
-        circle.setRadius(radius);
 
         // move the circoe to it's first position
         moveToStartPoint();
@@ -71,8 +67,10 @@ public:
 
     bool button_press(GdkEventButton* event)
     {
-        std::cout << "Click " << event->x << ", " << event->y << std::endl;
-        circle.setPosition(event->x - 32.f, event->y - 32.f);
+        cf::Brushes::Value<unsigned int> diameter;
+        brush.getProperty(cf::Brushes::Image::PROP_DIAMETER, diameter);
+        float r = diameter.get() / 2.f;
+        sprite.setPosition(event->x - r, event->y - r);
         return true;
     }
 
@@ -84,10 +82,13 @@ public:
 
     void draw()
     {
+        // Draw the textured sprite
         widget.renderWindow.clear();
 
         //widget.renderWindow.draw(circle);
-        brush.render(widget.renderWindow);
+        brush.render(sprite);
+
+        widget.renderWindow.draw(sprite);
 
         // Calls SFMLWidget::display, whitch checks wether the widget is realized
         // and if so, sf::RenderWindow::display gets called.
@@ -107,7 +108,9 @@ public:
 
     void moveToStartPoint()
     {
-        circle.setPosition(-radius, -radius);
+        cf::Brushes::Value<unsigned int> diameter;
+        brush.getProperty(cf::Brushes::Image::PROP_DIAMETER, diameter);
+        sprite.setPosition(-(float)diameter.get(), -(float)diameter.get());
     }
 };
 

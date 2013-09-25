@@ -5,6 +5,8 @@
 #include "BrushesBase.hpp"
 #include "BrushesProperty.hpp"
 
+#include <iostream>
+
 namespace cf
 {
 namespace Brushes
@@ -12,6 +14,7 @@ namespace Brushes
 
 class Image : public Base
 {
+    BRUSH_REG_HEADER
 private:
     unsigned int _diameter;
     std::string _source;

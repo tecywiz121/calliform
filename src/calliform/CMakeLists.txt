@@ -7,5 +7,5 @@ set(CMAKE_CXX_FLAGS "-g3 -gdwarf-3 -Wall -Wextra -Werror -Wstrict-aliasing -std=
 
 add_library(calliform SHARED calliform.cpp RenderPlane.cpp SFMLError.cpp
                              Layer.cpp Canvas.cpp BrushesProperty.cpp BrushesBase.cpp
-                             BrushesImage.cpp)
+                             BrushesImage.cpp BrushesFactory.cpp)
 target_link_libraries(calliform ${SFML_LIBRARIES})

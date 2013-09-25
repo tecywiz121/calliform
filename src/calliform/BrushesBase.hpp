@@ -7,6 +7,7 @@
 #include <SFML/Graphics.hpp>
 #include "BrushesProperty.hpp"
 #include "util.hpp"
+#include "BrushesFactory.hpp"
 
 namespace cf
 {

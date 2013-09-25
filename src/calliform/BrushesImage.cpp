@@ -8,6 +8,8 @@ namespace cf
 namespace Brushes
 {
 
+BRUSH_REG(Image);
+
 const std::string Image::PROP_DIAMETER = "Diameter";
 const std::string Image::PROP_SOURCE = "Source";
 const std::string Image::PROP_SMOOTH = "Smoothed";

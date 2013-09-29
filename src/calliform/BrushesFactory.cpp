@@ -1,31 +1,11 @@
 #include <utility>
-#include "BrushesFactory.hpp"
+#include "BrushesFactoryImpl.hpp"
 
 namespace cf
 {
 namespace Brushes
 {
 
-class Factory;
-
-static Factory& getFactory();
-
-class Factory
-{
-    friend Factory& getFactory();
-    friend int _register(std::string, const BrushMakerFunc);
-    friend void _deregister(int);
-private:
-    int _nextId = 0;
-    std::unordered_map<int, const std::pair<const std::string, const BrushMakerFunc> > _brushes;
-
-    Factory();
-    Factory(const Factory&);
-    Factory(Factory&&);
-
-    int registerBrush(std::string name, const BrushMakerFunc func);
-    void deregisterBrush(int id);
-};
 
 Factory::Factory()
 {
@@ -45,8 +25,9 @@ void Factory::deregisterBrush(int id)
     _brushes.erase(id);
 }
 
-static Factory& getFactory()
+Factory& getFactory()
 {
+    // FOR INTERNAL USE ONLY!
     static Factory factory;
     return factory;
 }

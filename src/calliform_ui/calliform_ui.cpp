@@ -7,6 +7,7 @@
 #include "BrushesImage.hpp"
 #include "BrushesProperty.hpp"
 
+#if 0
 class MovingCircle
 {
 public:
@@ -113,8 +114,8 @@ public:
         sprite.setPosition(-(float)diameter.get(), -(float)diameter.get());
     }
 };
+#endif
 
-#if 0
 class GdkCanvas : public cf::Canvas
 {
 private:
@@ -131,7 +132,6 @@ public:
         _Widget.invalidate();
     }
 };
-#endif
 
 int main(int argc, char* argv[])
 {
@@ -143,11 +143,11 @@ int main(int argc, char* argv[])
     //but it may be more then that
     SFMLWidget ourRenderWindow(sf::VideoMode(640, 480));
 
-    #if 0
     GdkCanvas canvas(ourRenderWindow);
-    #endif
 
+    #if 0
     MovingCircle moving_circle(ourRenderWindow);
+    #endif
 
     // Doesn't draw the renderWindow but makes it so it will draw when we add it to the window
     ourRenderWindow.show();
@@ -157,11 +157,23 @@ int main(int argc, char* argv[])
 
     Gtk::Button ourButton("Add Layer"); //Just a clickable button, it won't be doing anything
     ourButton.show();
-//    ourButton.signal_clicked().connect(sigc::hide_return(sigc::mem_fun(&canvas, &cf::Canvas::pushLayer)));
+    ourButton.signal_clicked().connect(sigc::bind(sigc::hide_return(sigc::mem_fun(&canvas, &cf::Canvas::emplaceLayer)), canvas.layers().end()));
+
+    Gtk::Button brushes("List Brushes");
+    brushes.show();
+    brushes.signal_clicked().connect([&canvas]() {
+        canvas.scanBrushes();
+
+        for (int bid : canvas.brushes())
+        {
+            std::cout << canvas.brushName(bid) << std::endl;
+        }
+    });
 
     ourVBox.pack_start(ourRenderWindow); //Add ourRenderWindow to the top of the VBox
 
     //PACK_SHRINK makes the VBox only allocate enough space to show the button and nothing more
+    ourVBox.pack_start(brushes, Gtk::PACK_SHRINK);
     ourVBox.pack_start(ourButton, Gtk::PACK_SHRINK);
     ourVBox.show();
 
